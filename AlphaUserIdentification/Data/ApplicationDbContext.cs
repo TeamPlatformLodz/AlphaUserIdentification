@@ -32,5 +32,7 @@ namespace AlphaUserIdentification.Data
                 .HasKey(m => new { m.ApplicationUserId, m.TeamId });
 
         }
+
+        public DbSet<AlphaUserIdentification.Models.ApplicationUser> ApplicationUser { get; set; }
     }
 }

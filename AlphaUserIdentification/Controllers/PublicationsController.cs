@@ -61,7 +61,7 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Url")] Publication publication)
+        public async Task<IActionResult> Create([Bind("Description,Url")] Publication publication)
         {
             publication.Author = await _context.Users.FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
          
@@ -95,7 +95,7 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Url")] Publication publication)
+        public async Task<IActionResult> Edit(int id, [Bind("PublicationId,Description,Url")] Publication publication)
         {
             if (id != publication.PublicationId)
             {
