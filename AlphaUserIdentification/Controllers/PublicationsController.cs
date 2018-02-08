@@ -9,11 +9,11 @@ using AlphaUserIdentification.Data;
 using AlphaUserIdentification.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-
+using AlphaUserIdentification.Models.PublicationsViewModels;
 
 namespace AlphaUserIdentification.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class PublicationsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,19 +28,9 @@ namespace AlphaUserIdentification.Controllers
         // GET: Publications
         public async Task<IActionResult> Index()
         {
-            var publications = await _context.Publications.Include(p => p.Author).Select(new ErrorViewMode
-            {
-                Publication = p
-                Email = p.Author.Email,
-                
-            }.ToListAsync();
-
-            var pub = new List<Tuple<Publication, string>>();
-            foreach(var p in publications)
-            {
-                pub.Add(Tuple.Create(p, p.Author.NormalizedEmail));
-            }
-            return View(publications);
+            var publications = await _context.Publications.Include(p => p.Author).ToListAsync();
+            var model = new IndexViewModel { Publications = publications };
+            return View(model);
         }
 
         // GET: Publications/Details/5
@@ -51,8 +41,7 @@ namespace AlphaUserIdentification.Controllers
                 return NotFound();
             }
 
-            var publication = await _context.Publications
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var publication = await _context.Publications.Include(p => p.Author).SingleOrDefaultAsync(m => m.Id == id);
             if (publication == null)
             {
                 return NotFound();
@@ -72,13 +61,12 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Url,Rating")] Publication publication)
+        public async Task<IActionResult> Create([Bind("Id,Description,Url")] Publication publication)
         {
             publication.Author = await _context.Users.FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
          
             if (ModelState.IsValid)
             {
-                
                 _context.Add(publication);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -94,7 +82,7 @@ namespace AlphaUserIdentification.Controllers
                 return NotFound();
             }
 
-            var publication = await _context.Publications.SingleOrDefaultAsync(m => m.Id == id);
+            var publication = await _context.Publications.Include(p => p.Author).SingleOrDefaultAsync(m => m.Id == id);
             if (publication == null)
             {
                 return NotFound();
@@ -107,7 +95,7 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Url,Rating")] Publication publication)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Url")] Publication publication)
         {
             if (id != publication.Id)
             {

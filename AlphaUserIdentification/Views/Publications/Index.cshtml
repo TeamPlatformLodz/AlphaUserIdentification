@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AlphaUserIdentification.Models.Publication>
+﻿@model AlphaUserIdentification.Models.PublicationsViewModels.IndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -9,41 +9,59 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
+@if (Model.Publications.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                @{ Publication pub = Model.Publications.First();
                 <th>
-                    @Html.DisplayNameFor(model => model.Description)
+                    @Html.DisplayNameFor(model => pub.Description)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Url)
+                    @Html.DisplayNameFor(model => pub.Url)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Rating)
+                    @Html.DisplayNameFor(model => pub.Rating)
                 </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description) : Author - @Html.DisplayFor(modelItem => item.Author.Email)
-            </td>
-            <td>
-                <a href="@Html.DisplayFor(model => item.Url)">
-                    @Html.DisplayFor(model => item.Url)
-                </a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+                <th>
+                    @Html.DisplayNameFor(model => pub.Author)
+                </th>
+                <th> <!-- for displaying operations-->
+                </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Publications)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <a href="@Html.DisplayFor(model => item.Url)">
+                        @Html.DisplayFor(model => item.Url)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author.Email)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+else
+{
+    <h1>No publications to display</h1>
+}
+
