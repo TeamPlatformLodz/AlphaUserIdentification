@@ -12,7 +12,7 @@ namespace AlphaUserIdentification.Models
      
         public ApplicationUser Author { get; set; } 
         [Key]
-        public int Id { get; private set; }
+        public int PublicationId { get; private set; }
         [StringLength(500, ErrorMessage = "Too long.")]
         public string Description { get; set; }
         public string Url { get; set; }

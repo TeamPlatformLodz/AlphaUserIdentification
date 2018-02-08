@@ -9,5 +9,6 @@ namespace AlphaUserIdentification.Models
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
+        public ICollection<Member> Teams { get; set; } = new List<Member>();
     }
 }

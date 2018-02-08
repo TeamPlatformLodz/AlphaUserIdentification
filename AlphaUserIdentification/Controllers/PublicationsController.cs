@@ -41,7 +41,7 @@ namespace AlphaUserIdentification.Controllers
                 return NotFound();
             }
 
-            var publication = await _context.Publications.Include(p => p.Author).SingleOrDefaultAsync(m => m.Id == id);
+            var publication = await _context.Publications.Include(p => p.Author).SingleOrDefaultAsync(m => m.PublicationId == id);
             if (publication == null)
             {
                 return NotFound();
@@ -82,7 +82,7 @@ namespace AlphaUserIdentification.Controllers
                 return NotFound();
             }
 
-            var publication = await _context.Publications.Include(p => p.Author).SingleOrDefaultAsync(m => m.Id == id);
+            var publication = await _context.Publications.Include(p => p.Author).SingleOrDefaultAsync(m => m.PublicationId == id);
             if (publication == null)
             {
                 return NotFound();
@@ -97,7 +97,7 @@ namespace AlphaUserIdentification.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Url")] Publication publication)
         {
-            if (id != publication.Id)
+            if (id != publication.PublicationId)
             {
                 return NotFound();
             }
@@ -111,7 +111,7 @@ namespace AlphaUserIdentification.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PublicationExists(publication.Id))
+                    if (!PublicationExists(publication.PublicationId))
                     {
                         return NotFound();
                     }
@@ -134,7 +134,7 @@ namespace AlphaUserIdentification.Controllers
             }
 
             var publication = await _context.Publications
-                .SingleOrDefaultAsync(m => m.Id == id);
+                .SingleOrDefaultAsync(m => m.PublicationId == id);
             if (publication == null)
             {
                 return NotFound();
@@ -148,7 +148,7 @@ namespace AlphaUserIdentification.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var publication = await _context.Publications.SingleOrDefaultAsync(m => m.Id == id);
+            var publication = await _context.Publications.SingleOrDefaultAsync(m => m.PublicationId == id);
             _context.Publications.Remove(publication);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -156,7 +156,7 @@ namespace AlphaUserIdentification.Controllers
 
         private bool PublicationExists(int id)
         {
-            return _context.Publications.Any(e => e.Id == id);
+            return _context.Publications.Any(e => e.PublicationId == id);
         }
     }
 }

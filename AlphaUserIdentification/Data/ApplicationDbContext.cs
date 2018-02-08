@@ -11,6 +11,7 @@ namespace AlphaUserIdentification.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Publication> Publications { get; set; }
+        public DbSet<Team> Teams{ get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -24,10 +25,12 @@ namespace AlphaUserIdentification.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.Entity<Publication>()
-                .HasKey(c => c.Id);
-             
-             
-             
+                .HasKey(c => c.PublicationId);
+            builder.Entity<Member>()
+                .HasKey(m => new { m.ApplicationUserId, m.TeamId });
+            //builder.Entity<Administrator>()
+            //    .HasKey(m => new { m.ApplicationUserId, m.TeamId });
+
         }
     }
 }
