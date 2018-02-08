@@ -28,8 +28,8 @@ namespace AlphaUserIdentification.Data
                 .HasKey(c => c.PublicationId);
             builder.Entity<Member>()
                 .HasKey(m => new { m.ApplicationUserId, m.TeamId });
-            //builder.Entity<Administrator>()
-            //    .HasKey(m => new { m.ApplicationUserId, m.TeamId });
+            builder.Entity<Administrator>()
+                .HasKey(m => new { m.ApplicationUserId, m.TeamId });
 
         }
     }

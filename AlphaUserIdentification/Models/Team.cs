@@ -11,7 +11,7 @@ namespace AlphaUserIdentification.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
-        public ICollection<Member> Members { get; set; } = new List<Member>();
-        public ICollection<Member> Administrators { get; set; } = new List<Member>();
+        public List<Member> Members { get; set; }
+        public List<Administrator> Administrators { get; set; }
     }
 }
