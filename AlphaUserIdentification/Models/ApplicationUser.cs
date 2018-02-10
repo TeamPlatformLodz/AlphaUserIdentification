@@ -11,5 +11,13 @@ namespace AlphaUserIdentification.Models
     {
         public List<Member> Teams { get; set; } = new List<Member>();
         public List<Administrator> Administrators { get; set; } = new List<Administrator>();
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public string GetFullName()
+        {
+            return FirstName + " " + LastName;
+        }
     }
 }

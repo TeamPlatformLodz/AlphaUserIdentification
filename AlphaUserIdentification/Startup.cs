@@ -30,7 +30,14 @@ namespace AlphaUserIdentification
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                //default value is true
+                //options.Password.RequiredLength = 6;
+                //options.Password.RequireDigit = true;
+                //options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 

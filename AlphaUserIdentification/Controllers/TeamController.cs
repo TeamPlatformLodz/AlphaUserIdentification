@@ -9,6 +9,7 @@ using AlphaUserIdentification.Data;
 using AlphaUserIdentification.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using AlphaUserIdentification.Models.TeamViewModels;
 
 namespace AlphaUserIdentification.Controllers
 {
@@ -171,10 +172,10 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddMember([Bind("UserId")] string userId, [Bind("TeamId")] int teamId)
+        public async Task<IActionResult> AddMember([Bind("UserId,TeamId")] AddMemberViewModel viewData)
         {
-            teamId = 1;
-            userId = "14e9e7de-2e29-4106-8b06-ce8c91a4e08a";
+            var teamId = viewData.TeamId;
+            var userId = viewData.UserId;
             if (ModelState.IsValid)
             {
                 var teamToAdd = await _context.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId);

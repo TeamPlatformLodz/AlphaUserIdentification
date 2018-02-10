@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using AlphaUserIdentification.Models;
 using AlphaUserIdentification.Models.ManageViewModels;
 using AlphaUserIdentification.Services;
+using AlphaUserIdentification.Data;
 
 namespace AlphaUserIdentification.Controllers
 {
@@ -25,6 +26,7 @@ namespace AlphaUserIdentification.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly UrlEncoder _urlEncoder;
+        private readonly ApplicationDbContext _context;
 
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
@@ -34,13 +36,15 @@ namespace AlphaUserIdentification.Controllers
           SignInManager<ApplicationUser> signInManager,
           IEmailSender emailSender,
           ILogger<ManageController> logger,
-          UrlEncoder urlEncoder)
+          UrlEncoder urlEncoder,
+          ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
             _urlEncoder = urlEncoder;
+            _context = context;
         }
 
         [TempData]
@@ -57,6 +61,8 @@ namespace AlphaUserIdentification.Controllers
 
             var model = new IndexViewModel
             {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Username = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
@@ -80,6 +86,20 @@ namespace AlphaUserIdentification.Controllers
             if (user == null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (model.FirstName != user.FirstName)
+            {
+                var contextUser = _context.Users.Find(user.Id);
+                contextUser.FirstName = model.FirstName;
+                await _context.SaveChangesAsync();
+            }
+
+            if (model.LastName != user.LastName)
+            {
+                var contextUser = _context.Users.Find(user.Id);
+                contextUser.LastName = model.LastName;
+                await _context.SaveChangesAsync();
             }
 
             var email = user.Email;
