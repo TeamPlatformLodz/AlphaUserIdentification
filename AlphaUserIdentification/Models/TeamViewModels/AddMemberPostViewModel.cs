@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace AlphaUserIdentification.Models.TeamViewModels
 {
-    public class AddMemberViewModel
+    public class AddMemberPostViewModel
     {
-        //users
-        public List<ApplicationUser> Users { get; set; }
-
-        //teams
-        public List<Team> Teams { get; set; }
+        public string UserId { get; set; }
+        public int TeamId { get; set; }
     }
 }

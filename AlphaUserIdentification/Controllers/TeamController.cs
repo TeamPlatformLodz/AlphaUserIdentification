@@ -10,6 +10,7 @@ using AlphaUserIdentification.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using AlphaUserIdentification.Models.TeamViewModels;
+using AlphaUserIdentification.Extensions;
 
 namespace AlphaUserIdentification.Controllers
 {
@@ -162,9 +163,24 @@ namespace AlphaUserIdentification.Controllers
 
 
         // GET: Team/AddMember
-        public IActionResult AddMember()
+        public async Task<IActionResult> AddMember()
         {
-            return View();
+            var curUser = await UserHelper.GetCurrentUserById(_context, _userManager.GetUserId(User));
+            var teams = new List<Team>();
+            //adds administrator teams to teams list
+            _context.Administrators.Where(a => a.ApplicationUserId == curUser.Id).
+                Include(a => a.Team).ToList().
+                ForEach(a => { Task.Run(() => teams.Add(a.Team));}); 
+            //var teams = new
+            var users = await _context.Users.ToListAsync();
+            return View(
+                new Tuple<AddMemberViewModel,AddMemberPostViewModel> (
+                    new AddMemberViewModel {
+                    Teams = teams,
+                    Users = users
+                },
+                    new AddMemberPostViewModel() 
+                ));
         }
 
         // POST: Team/AddMember
@@ -172,7 +188,7 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddMember([Bind("UserId,TeamId")] AddMemberViewModel viewData)
+        public async Task<IActionResult> AddMember(AddMemberPostViewModel viewData)
         {
             var teamId = viewData.TeamId;
             var userId = viewData.UserId;

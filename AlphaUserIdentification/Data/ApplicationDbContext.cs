@@ -12,6 +12,7 @@ namespace AlphaUserIdentification.Data
     {
         public DbSet<Publication> Publications { get; set; }
         public DbSet<Team> Teams{ get; set; }
+        public DbSet<Administrator> Administrators { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

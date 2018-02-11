@@ -1,4 +1,4 @@
-﻿@model AlphaUserIdentification.Models.TeamViewModels.AddMemberViewModel
+﻿@model Tuple<AlphaUserIdentification.Models.TeamViewModels.AddMemberViewModel, AlphaUserIdentification.Models.TeamViewModels.AddMemberPostViewModel>
 
 @{
     ViewData["Title"] = "AddMember";
@@ -10,7 +10,44 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddMember">
+        <h2>Teams</h2>
+        <form method="post">
+            <ul>
+                @for (var i=0; i < Model.Item1.Teams.Count(); i++)
+        {
+                <li>
+                   <input type="checkbox" asp-for="@Model.Item2.TeamId" />
+                        <label asp-for="@Model.Item1.Teams"> @Model.Item1.Teams[i].Name </label>
+                        <input type="hidden" asp-for="@Model.Item1.Teams[i].TeamId" />
+                    </li>
+        }
+                    </ul>
+
+
+                    <h2>Users</h2>
+                    <ul>
+                        @foreach (var user in Model.Item1.Users)
+                {
+                    <li>
+                        @user.GetFullName()
+                    </li>
+        }
+                    </ul>
+                    <input type="submit" value="AddMember" />
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
+
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
+
+
+        @*<form asp-action="AddMember">
             <div class="form-group">
                 <label asp-for="TeamId" class="control-label"></label>
                 <input asp-for="TeamId" class="form-control" />
@@ -24,14 +61,4 @@
             <div class="form-group">
                 <input type="submit" value="AddMember" class="btn btn-default" />
             </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+        </form>*@
