@@ -1,0 +1,5 @@
+﻿
+TODO :
+	- Naprawić górny prawy róg panel logowania
+	- Strona logowania
+	- obrazku użytkowników
