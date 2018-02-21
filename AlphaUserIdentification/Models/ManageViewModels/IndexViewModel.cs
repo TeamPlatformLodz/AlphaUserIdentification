@@ -14,6 +14,8 @@ namespace AlphaUserIdentification.Models.ManageViewModels
 
         public string Username { get; set; }
 
+        public string ImageUrl { get; set; }
+
         public bool IsEmailConfirmed { get; set; }
 
         [Required]

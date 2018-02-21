@@ -19,8 +19,7 @@
                         var curUser = user as ApplicationUser;
                         <li class="">
                             <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                <img src="images/img.jpg" alt="" />
-                                <p>@curUser.GetFullName()</p>
+                                <img src="@curUser.ImageUrl" alt="" /> @curUser.GetFullName()
                                 <span class=" fa fa-angle-down"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-usermenu pull-right">

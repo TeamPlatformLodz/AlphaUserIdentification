@@ -64,6 +64,7 @@ namespace AlphaUserIdentification.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Username = user.UserName,
+                ImageUrl = user.ImageUrl,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 IsEmailConfirmed = user.EmailConfirmed,
@@ -101,7 +102,12 @@ namespace AlphaUserIdentification.Controllers
                 contextUser.LastName = model.LastName;
                 await _context.SaveChangesAsync();
             }
-
+            if (model.ImageUrl != user.ImageUrl)
+            {
+                var contextUser = _context.Users.Find(user.Id);
+                contextUser.ImageUrl = model.ImageUrl;
+                await _context.SaveChangesAsync();
+            }
             var email = user.Email;
             if (model.Email != email)
             {

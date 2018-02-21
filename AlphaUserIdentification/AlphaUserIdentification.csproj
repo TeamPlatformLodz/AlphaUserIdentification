@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\lib\gentelella\production\**" />
+    <Content Remove="wwwroot\lib\gentelella\production\**" />
+    <EmbeddedResource Remove="wwwroot\lib\gentelella\production\**" />
+    <None Remove="wwwroot\lib\gentelella\production\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\Migrations\20180206151739_AuthorPublication.cs" />
     <Compile Remove="Data\Migrations\20180206151739_AuthorPublication.Designer.cs" />
   </ItemGroup>
