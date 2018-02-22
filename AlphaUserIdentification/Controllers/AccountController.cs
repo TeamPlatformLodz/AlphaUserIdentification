@@ -224,7 +224,8 @@ namespace AlphaUserIdentification.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     UserName = model.FirstName +  model.LastName,
-                    Email = model.Email
+                    Email = model.Email,
+                    ImageUrl = "/images/default-user-image.png"
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

@@ -1,4 +1,9 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
+@using AlphaUserIdentification.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
-    <title>Gentelella Alela! | </title>
+    <title>TeamPlatform | </title>
     <!-- Bootstrap -->
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -34,24 +39,38 @@
     <!-- Custom Theme Style -->
     <link href="~/lib/gentelella/build/css/custom.min.css" rel="stylesheet">
 </head>
+
 <body class="nav-md">
     <div class="container body">
         <div class="main_container">
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Gentelella Alela!</span></a>
+                        <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>TeamPlatform Rules!</span></a>
                     </div>
                     <div class="clearfix"></div>
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <!-- <img src="images/img.jpg" alt="..." class="img-circle profile_img"> -->
+                            
                         </div>
-                        <div class="profile_info">
-                            <span>Welcome,</span>
-                            <h2>John Doe</h2>
-                        </div>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            var user = await UserManager.GetUserAsync(User);
+                            var curUser = user as ApplicationUser;
+                            <img src="@curUser.ImageUrl" alt="..." class="img-circle profile_img">
+                            <div class="profile_info">
+                                <span>Welcome,</span>
+                                <h2>@curUser.GetFullName()</h2>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="/images/default-user-image.png" alt="..." class="img-circle profile_img">
+                            <div class="profile_info">
+                                <span>Welcome</span>
+                            </div>
+                        }
                     </div>
                     <!-- /menu profile quick info -->
                     <br />
@@ -67,10 +86,16 @@
                                         <li><a asp-action="Create" asp-controller="Team">Create</a></li>
                                     </ul>
                                 </li>
-              
+                                <li>
+                                    <a><i class="fa fa-newspaper-o"></i> Publications <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a asp-action="Index" asp-controller="Publications">Home</a></li>
+                                        <li><a asp-action="Create" asp-controller="Publications">Create</a></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </div>
-                        
+
                     </div>
                     <!-- /sidebar menu -->
                     <!-- /menu footer buttons -->
@@ -134,8 +159,6 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
-    <!-- FastClick -->
-    <script src="~/lib/gentelella/vendors/fastclick/lib/fastclick.js"></script>
     <!-- NProgress -->
     <script src="~/lib/gentelella/vendors/nprogress/nprogress.js"></script>
     <!-- Chart.js -->

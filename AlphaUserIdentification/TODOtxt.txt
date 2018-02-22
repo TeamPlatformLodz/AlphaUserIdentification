@@ -2,4 +2,6 @@
 TODO :
 	- v		Naprawić górny prawy róg panel logowania 
 	- Strona logowania
-	- obrazku użytkowników
+	- v		 obrazku użytkowników (wstepnie zaimplemenotwane)
+	-	- v		wyśrodkowanie obrazka na stronie manage account
+	- zakładka publications w panelu nawigacyjnym
