@@ -1,4 +1,4 @@
-﻿@model AlphaUserIdentification.Models.Team
+﻿@model AlphaUserIdentification.Models.TeamViewModels.DetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,34 +11,63 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Team.Name)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Team.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.Team.Description)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Description)
+            @Html.DisplayFor(model => model.Team.Description)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.ImageUrl)
+            @Html.DisplayNameFor(model => model.Team.ImageUrl)
         </dt>
-        <dd >
-            <img src= "@Html.DisplayFor(model => model.ImageUrl)"/>
+        <dd>
+            <img src="@Html.DisplayFor(model => model.Team.ImageUrl)" />
         </dd>
     </dl>
-    <ul>
-        @foreach (var m in Model.Members)
+</div>
+<div>
+    <ul class="list-unstyled top_profiles scroll-view">
+        @foreach (var user in @Model.AlreadyTeamUsers)
         {
-            <li>
-                @m.ApplicationUserId @m?.ApplicationUser?.NormalizedEmail
+            <li class="media event">
+                <a class="pull-left border-aero profile_thumb">
+                    <i class="fa fa-user aero"></i>
+                </a>
+                <div class="media-body">
+                    <a class="title">@user.ApplicationUser.GetFullName()</a>
+                    <p><strong>@user.ApplicationUser.NormalizedEmail</strong>  </p>
+                    <p>
+
+                    </p>
+                </div>
             </li>
         }
     </ul>
 </div>
+@if (@Model.IsAdmin)
+{
+    <form asp-action="AddMember" asp-route-id="@Model.Team.TeamId">
+        <div class="col-sm-4">
+            <select class="js-example-basic-multiple" name="users[]" multiple="multiple" style="width:100%">
+                @foreach (var user in Model.NotTeamUsers)
+                {
+                    <option value="@user.Id">@user.GetFullName()</option>
+                }
+            </select>
+        </div>
+        <div class="col-sm-4">
+            <input type="submit" value="Add Members" />
+        </div>
+    </form>
+    <br />
+}
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.TeamId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Team.TeamId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

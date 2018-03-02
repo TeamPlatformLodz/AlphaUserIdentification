@@ -83,11 +83,9 @@ namespace AlphaUserIdentification.Controllers
                     {
                         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                         return View(model);
-                    }
-                }
+                    }                }
                 else
-                {
-                    ModelState.AddModelError(string.Empty, "User not found.");
+                {                    ModelState.AddModelError(string.Empty, "User not found.");
                     return View(model);
                 }
             }

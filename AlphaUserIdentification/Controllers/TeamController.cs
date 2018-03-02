@@ -48,8 +48,37 @@ namespace AlphaUserIdentification.Controllers
             {
                 return NotFound();
             }
-
-            return View(team);
+            // local method
+            List<ApplicationUser> GetNonMembers ()
+            {
+                var allUsers = _context.ApplicationUser;
+                List<ApplicationUser> nonTeamUsers = new List<ApplicationUser>();
+                bool isNotIn;
+                foreach ( var user in allUsers)
+                {
+                    isNotIn = true;
+                    foreach(var teamUser in team.Members)
+                    {
+                        if (user.Id == teamUser.ApplicationUserId)
+                        {
+                            isNotIn = false;
+                            break;
+                        }
+                    }
+                    if (isNotIn)
+                        nonTeamUsers.Add(user);
+                }
+                return nonTeamUsers;
+            }
+            var notTeamUsers = GetNonMembers();
+            DetailsViewModel viewModel = new DetailsViewModel()
+            {
+                IsAdmin = await IsAdmin(team.TeamId),
+                Team = team,
+                AlreadyTeamUsers = team.Members,
+                NotTeamUsers = notTeamUsers
+            };
+            return View(viewModel);
         }
 
         // GET: Team/Create
@@ -188,25 +217,44 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddMember(AddMemberPostViewModel viewData)
+        public async Task<IActionResult> AddMember(int id, List<string> users)
         {
-            var teamId = viewData.TeamId;
-            var userId = viewData.UserId;
+            var teamId = id;
             if (ModelState.IsValid)
             {
-                var teamToAdd = await _context.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId);
-                if (teamToAdd != null)
+                if (await IsAdmin(teamId))
                 {
-                    var userToAdd = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                    if (userToAdd != null)
+                    var teamToAdd = await _context.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId);
+                    if (teamToAdd != null)
                     {
-                        teamToAdd.AddMember(userToAdd);
-                        await _context.SaveChangesAsync();
+                        foreach (var userId in users)
+                        {
+                            var userToAdd = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                            if (userToAdd != null)
+                            {
+                                teamToAdd.AddMember(userToAdd);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
+                        return RedirectToAction(nameof(Details), new { id = teamId });
                     }
-                }
-                return RedirectToAction(nameof(Index));
+                }        
             }
-            return View();
+            return RedirectToAction(nameof(Index));
         }
+
+        #region Helper Methods
+        /// <summary>
+        /// Helper method to check if currently logged user is an Administrator of given Team.
+        /// </summary>
+        /// <param name="teamId"></param>
+        /// <returns></returns>
+        async Task<bool> IsAdmin(int teamId)
+        {
+            ApplicationUser curUser = await UserHelper.GetCurrentUserById(_context, _userManager.GetUserId(User));
+            bool result = _context.Administrators.Where(a => a.TeamId == teamId).ToList().Exists(u => u.ApplicationUserId == curUser.Id);
+            return result;
+        }
+        #endregion
     }
 }

@@ -31,13 +31,15 @@
     <link href="~/lib/gentelella/vendors/nprogress/nprogress.css" rel="stylesheet">
     <!-- iCheck -->
     <link href="~/lib/gentelella/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
-
     <!-- bootstrap-progressbar -->
     <link href="~/lib/gentelella/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
     <!-- bootstrap-daterangepicker -->
     <link href="~/lib/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="~/lib/gentelella/build/css/custom.min.css" rel="stylesheet">
+    <!-- Select2 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+
 </head>
 
 <body class="nav-md">
@@ -52,7 +54,7 @@
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            
+
                         </div>
                         @if (SignInManager.IsSignedIn(User))
                         {
@@ -169,12 +171,13 @@
     <script src="~/lib/gentelella/vendors/iCheck/icheck.min.js"></script>
     <!-- DateJS -->
     <script src="~/lib/gentelella/vendors/DateJS/build/date.js"></script>
-
     <!-- bootstrap-daterangepicker -->
     <script src="~/lib/gentelella/vendors/moment/min/moment.min.js"></script>
     <script src="~/lib/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="~/lib/gentelella/build/js/custom.min.js"></script>
+    <!-- Select2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 

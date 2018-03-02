@@ -19,3 +19,7 @@ function imageExists(url) {
     img.src = url;
     return isReachable;
 }
+
+$(document).ready(function () {
+    $('.js-example-basic-multiple').select2({width:"resolve"});
+});
