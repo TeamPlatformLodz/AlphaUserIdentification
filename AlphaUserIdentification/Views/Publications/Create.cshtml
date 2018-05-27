@@ -22,7 +22,15 @@
                 <input asp-for="Url" class="form-control" />
                 <span asp-validation-for="Url" class="text-danger"></span>
             </div>
-           
+            <div class="col-sm-4">
+                <select class="js-example-basic-multiple" name="visibility" style="width:100%">
+                    @foreach (var value in Enum.GetValues(typeof(PublicationVisibility)).Cast<PublicationVisibility>())
+                    {
+                    <option value="@value">@value.ToString()</option>
+                    }
+                </select>
+            </div>
+            <br />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>

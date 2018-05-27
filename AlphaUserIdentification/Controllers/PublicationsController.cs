@@ -28,9 +28,25 @@ namespace AlphaUserIdentification.Controllers
         // GET: Publications
         public async Task<IActionResult> Index()
         {
-            var publications = await _context.Publications.Include(p => p.Author).ToListAsync();
+            var publications = await _context.Publications.Where(p => IsVisible(p, _userManager.GetUserId(User))).Include(p => p.Author).ToListAsync();
             var model = new IndexViewModel { Publications = publications };
             return View(model);
+        }
+        public bool IsVisible(Publication p, string userId)
+        {
+            if (p.Visibility == PublicationVisibility.Public)
+            {
+                return true;
+            }
+            var user = _context.Users.First(u => u.Id == userId);
+            var authorTeams = _context.Teams.Where(t => p.Author.Teams.Exists(t2 => t2.TeamId == t.TeamId));
+            var userTeams = _context.Teams.Where(t => user.Teams.Exists(t2 => t2.TeamId == t.TeamId));
+            foreach (var authorTeam in authorTeams) // check if author and user in the same team
+            {
+                if (userTeams.Any(t => t.TeamId == authorTeam.TeamId))
+                    return true;
+            }
+            return false;
         }
 
         // GET: Publications/Details/5
@@ -61,7 +77,7 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Description,Url")] Publication publication)
+        public async Task<IActionResult> Create([Bind("Description,Url,Visibility")] Publication publication)
         {
             publication.Author = await _context.Users.FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
          
@@ -95,7 +111,7 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PublicationId,Description,Url")] Publication publication)
+        public async Task<IActionResult> Edit(int id, [Bind("PublicationId,Description,Url,Visibility")] Publication publication)
         {
             if (id != publication.PublicationId)
             {

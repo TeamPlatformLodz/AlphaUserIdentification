@@ -9,11 +9,11 @@ namespace AlphaUserIdentification.Models
 {
     public class Publication
     {
-     
-        public ApplicationUser Author { get; set; } 
         [Key]
-        public int PublicationId { get; private set; }
+        public int PublicationId { get; set; }
         [StringLength(500, ErrorMessage = "Too long.")]
+        public ApplicationUser Author { get; set; }
+        public PublicationVisibility Visibility { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }
         public int Rating { get; set; }
