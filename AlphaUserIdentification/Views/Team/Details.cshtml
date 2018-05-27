@@ -49,6 +49,7 @@
         }
     </ul>
 </div>
+@*      Add member section      *@
 @if (@Model.IsAdmin)
 {
     <form asp-action="AddMember" asp-route-id="@Model.Team.TeamId">
@@ -66,7 +67,7 @@
     </form>
     <br />
 }
-
+@*      /Add member section      *@
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Team.TeamId">Edit</a> |
     <a asp-action="Index">Back to List</a>

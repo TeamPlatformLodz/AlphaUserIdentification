@@ -30,7 +30,9 @@ namespace AlphaUserIdentification.Controllers
         {
             var curUserWithTeamsLoaded = await _context.Users.Include(u => u.Teams).FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
             var publications = await _context.Publications.Include(p => p.Author)
-                                                          .Include(p => p.Author.Teams).ToListAsync();
+                                                          .Include(p => p.Author.Teams)
+                                                          .Include(p => p.PublishedFor)
+                                                          .ToListAsync();
             publications = publications.Where(p => IsVisible(p, curUserWithTeamsLoaded) == true).ToList();
 
 
@@ -43,16 +45,21 @@ namespace AlphaUserIdentification.Controllers
             {
                 return true;
             }
+            if (p.Author.Id == user.Id)
+            {
+                return true;
+            }
             if (p.Visibility == PublicationVisibility.Public) //  || p.Visibility == PublicationVisibility.None
             {
                 return true;
             }
-            var authorTeams = p.Author.Teams;
-            var userTeams = user.Teams;
-            foreach (var authorTeam in authorTeams) // check if author and user in the same team
+            var commonTeams = from Member t in user.Teams
+                              join PublishedFor pf in p.PublishedFor on t.TeamId equals pf.TeamId
+                              select t.TeamId;
+            commonTeams = commonTeams.ToList();
+            if(commonTeams.Any())
             {
-                if (userTeams.Any(t => t.TeamId == authorTeam.TeamId))
-                    return true;
+                return true;
             }
             return false;
         }
@@ -75,8 +82,10 @@ namespace AlphaUserIdentification.Controllers
         }
 
         // GET: Publications/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var curUserId = _userManager.GetUserId(User);
+            ViewData["teams"] = await _context.Member.Where(m => m.ApplicationUserId == curUserId).Select(m => m.Team).ToListAsync();
             return View();
         }
 
@@ -85,13 +94,29 @@ namespace AlphaUserIdentification.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Description,Url,Visibility")] Publication publication)
+        public async Task<IActionResult> Create(List<int> teamIds, [Bind("Description,Url,Visibility")] Publication publication)
         {
-            publication.Author = await _context.Users.FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
-         
+            var author = await _context.Users.Include(u => u.Teams).FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
+            publication.Author = author;
             if (ModelState.IsValid)
             {
                 _context.Add(publication);
+                await _context.SaveChangesAsync();
+                foreach (var teamId in teamIds)
+                {
+                    if(author.Teams.Find(t => t.TeamId == teamId) != null)
+                    {
+                        _context.Add(new PublishedFor
+                        {
+                            TeamId = teamId,
+                            PublicationId = publication.PublicationId
+                        });
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
