@@ -28,19 +28,27 @@ namespace AlphaUserIdentification.Controllers
         // GET: Publications
         public async Task<IActionResult> Index()
         {
-            var publications = await _context.Publications.Where(p => IsVisible(p, _userManager.GetUserId(User))).Include(p => p.Author).ToListAsync();
+            var curUserWithTeamsLoaded = await _context.Users.Include(u => u.Teams).FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
+            var publications = await _context.Publications.Include(p => p.Author)
+                                                          .Include(p => p.Author.Teams).ToListAsync();
+            publications = publications.Where(p => IsVisible(p, curUserWithTeamsLoaded) == true).ToList();
+
+
             var model = new IndexViewModel { Publications = publications };
             return View(model);
         }
-        public bool IsVisible(Publication p, string userId)
+        public bool IsVisible(Publication p, ApplicationUser user)
         {
-            if (p.Visibility == PublicationVisibility.Public)
+            if(p.Author == null)
             {
                 return true;
             }
-            var user = _context.Users.First(u => u.Id == userId);
-            var authorTeams = _context.Teams.Where(t => p.Author.Teams.Exists(t2 => t2.TeamId == t.TeamId));
-            var userTeams = _context.Teams.Where(t => user.Teams.Exists(t2 => t2.TeamId == t.TeamId));
+            if (p.Visibility == PublicationVisibility.Public) //  || p.Visibility == PublicationVisibility.None
+            {
+                return true;
+            }
+            var authorTeams = p.Author.Teams;
+            var userTeams = user.Teams;
             foreach (var authorTeam in authorTeams) // check if author and user in the same team
             {
                 if (userTeams.Any(t => t.TeamId == authorTeam.TeamId))
