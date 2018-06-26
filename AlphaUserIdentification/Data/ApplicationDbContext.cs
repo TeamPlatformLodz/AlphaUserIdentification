@@ -11,10 +11,13 @@ namespace AlphaUserIdentification.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Publication> Publications { get; set; }
+        public DbSet<PublicationLike> PublicationLikes { get; set; }
         public DbSet<Team> Teams{ get; set; }
         public DbSet<Administrator> Administrators { get; set; }
         public DbSet<Member> Member { get; set; }
         public DbSet<PublishedFor> PublishedFor { get; set; }
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -34,8 +37,10 @@ namespace AlphaUserIdentification.Data
                 .HasKey(m => new { m.ApplicationUserId, m.TeamId });
             builder.Entity<PublishedFor>()
                 .HasKey(m => new { m.PublicationId, m.TeamId });
+            builder.Entity<PublishedFor>()
+                .HasKey(m => new { m.PublicationId, m.TeamId });
+            builder.Entity<PublicationLike>()
+                .HasKey(m => new { m.PublicationId, m.ApplicationUserId });
         }
-
-        public DbSet<AlphaUserIdentification.Models.ApplicationUser> ApplicationUser { get; set; }
     }
 }

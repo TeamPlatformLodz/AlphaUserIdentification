@@ -1,0 +1,15 @@
+﻿create trigger AddPublicationLike ON PublicationLikes AFTER	INSERT
+AS
+BEGIN
+	DECLARE @PublicationId INT, @UserId VARCHAR, @newRating int
+	DECLARE likeCursor CURSOR FOR SELECT Distinct PublicationId, ApplicationUserId from inserted 
+	FETCH NEXT FROM likeCursor INTO @PublicationId, @UserId
+	WHILE(@@FETCH_STATUS = 0)
+	BEGIN
+		SELECT @newRating =  COUNT(PublicationId) FROM PublicationLikes AS p
+			WHERE p.PublicationId = @PublicationId 
+			GROUP BY p.PublicationId
+		UPDATE Publications SET Rating = @newRating 
+			WHERE PublicationId = @PublicationId
+    End
+END

@@ -203,6 +203,29 @@ namespace AlphaUserIdentification.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async void LikePublication([Bind("PublicationId")] Publication publication)
+        {
+            var curUserId = GetCurrentUserId();
+            var like = await _context.PublicationLikes.FirstOrDefaultAsync(l => l.ApplicationUserId == curUserId && l.PublicationId == publication.PublicationId);
+            if(like != null)
+            {
+                //TODO: error
+            }
+            else
+            {
+                _context.PublicationLikes.Add(new PublicationLike
+                {
+                    PublicationId = publication.PublicationId,
+                    ApplicationUserId = curUserId
+                });
+            }
+        }
+
+        private string GetCurrentUserId()
+        {
+            return _userManager.GetUserId(User);
+        }
+
         private bool PublicationExists(int id)
         {
             return _context.Publications.Any(e => e.PublicationId == id);
